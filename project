@@ -16,9 +16,10 @@ def start(message):
         item1 = types.KeyboardButton('Регистрация') #добавляем кнопку
         item2 = types.KeyboardButton('Возможности')
         item3 = types.KeyboardButton('Помощь')
-        item4 = types.KeyboardButton('Курсы валют')
+        item4 = types.KeyboardButton('Конвертация рублей в валюту')
+        item5 = types.KeyboardButton('Курсы валют')
 
-        markup.add(item1, item2, item3, item4) #дабавляем кнопки в область клавиатуры
+        markup.add(item1, item2, item3, item4, item5) #дабавляем кнопки в область клавиатуры
         bot.send_message(message.from_user.id, 'Привет! Я - Check-Bot и я могу быстро предоставить тебе актуальные курсы валют!\n' + 'Для предоставления курса я использую сайт Центрального Банка РФ', reply_markup=markup)
         #информационное сообщение
 
@@ -55,16 +56,22 @@ def start(message):
         markup.add(item1, item2, item3, item4, item5, item6)
         bot.send_message(message.from_user.id, 'Главное меню :', reply_markup=markup)
 
+    elif message.text == 'Конвертация рублей в валюту':
+        bot.send_message(message.from_user.id, 'Сколько рублей ты хочешь конвертировать?') #отправляем желаемое число, которое в последствии запоминаем в функции get_conver_rub
+        bot.register_next_step_handler(message, get_conver_rub)
+
     elif message.text == 'Регистрация':
         bot.send_message(message.from_user.id, 'Как тебя зовут?') #отправляем имя и запоминаем его в функции get_name
         bot.register_next_step_handler(message, get_name)
     else:
         bot.send_message(message.from_user.id, 'Напиши "Регистрация"')
 
+
 def get_name(message):
     global name #запоминаем имя пользователя
     name = message.text
     bot.send_message(message.from_user.id, 'Приятно познакомиться, ' + str(name) + '!')
+
 
 def get_valute(message):
     keyboard = types.InlineKeyboardMarkup() #наша
@@ -84,6 +91,29 @@ def get_valute(message):
     key_egp = types.InlineKeyboardButton(text='EGP', callback_data='EGP')
     keyboard.add(key_egp)
     question = str(name) + ', какая валюта тебя интересует?'
+    bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
+
+
+def get_conver_rub(message):
+    global rub #запоминаем сумму в рублях
+    rub = int(message.text)
+    keyboard = types.InlineKeyboardMarkup() #наша клавиатура
+
+    key_rubusd = types.InlineKeyboardButton(text='RUB / USD', callback_data='RUB / USD') #кнопка «RUB/USD»
+    keyboard.add(key_rubusd) #добавляем кнопку в клавиатуру
+    key_rubeur = types.InlineKeyboardButton(text='RUB / EUR', callback_data='RUB / EUR')
+    keyboard.add(key_rubeur)
+    key_rubcny = types.InlineKeyboardButton(text='RUB / CNY', callback_data='RUB / CNY')
+    keyboard.add(key_rubcny)
+    key_rubgbp = types.InlineKeyboardButton(text='RUB / GBP', callback_data='RUB / GBP')
+    keyboard.add(key_rubgbp)
+    key_rubtry = types.InlineKeyboardButton(text='RUB / TRY', callback_data='RUB / TRY')
+    keyboard.add(key_rubtry)
+    key_rubaed = types.InlineKeyboardButton(text='RUB / AED', callback_data='RUB / AED')
+    keyboard.add(key_rubaed)
+    key_rubegp = types.InlineKeyboardButton(text='RUB / EGP', callback_data='RUB / EGP')
+    keyboard.add(key_rubegp)
+    question = 'В какую валюту ты хочешь конвертировать рубли?'
     bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
 
 
@@ -151,5 +181,83 @@ def callback_worker(call): #прописываем действия, котор�
         except Exception as e:
             bot.send_message(call.message.chat.id, 'Упс, курс сейчас недоступен(((')
             pass
+
+    elif call.data == "RUB / USD":
+        try:
+            res = requests.get("https://www.cbr-xml-daily.ru/daily_json.js")
+            RUB_USD = json.loads(res.text)['Valute']['USD']['Value']
+            int_RUB_USD = int(RUB_USD)
+            summ = rub / int_RUB_USD
+            bot.send_message(call.message.chat.id, 'Купив доллары на ' + str(rub) + '₽ ты получишь : ' + str(summ) + '$')
+        except Exception as e:
+            bot.send_message(call.message.chat.id, 'Упс, курс сейчас недоступен(((')
+            pass
+
+    elif call.data == "RUB / EUR":
+        try:
+            res = requests.get("https://www.cbr-xml-daily.ru/daily_json.js")
+            RUB_EUR = json.loads(res.text)['Valute']['EUR']['Value']
+            int_RUB_EUR = int(RUB_EUR)
+            summ = rub / int_RUB_EUR
+            bot.send_message(call.message.chat.id, 'Купив евро на ' + str(rub) + '₽ ты получишь : ' + str(summ) + '€')
+        except Exception as e:
+            bot.send_message(call.message.chat.id, 'Упс, курс сейчас недоступен(((')
+            pass
+
+    elif call.data == "RUB / CNY":
+        try:
+            res = requests.get("https://www.cbr-xml-daily.ru/daily_json.js")
+            RUB_CNY = json.loads(res.text)['Valute']['CNY']['Value']
+            int_RUB_CNY = int(RUB_CNY)
+            summ = rub / int_RUB_CNY
+            bot.send_message(call.message.chat.id, 'Купив юани на ' + str(rub) + '₽ ты получишь : ' + str(summ) + '¥')
+        except Exception as e:
+            bot.send_message(call.message.chat.id, 'Упс, курс сейчас недоступен(((')
+            pass
+
+    elif call.data == "RUB / GBP":
+        try:
+            res = requests.get("https://www.cbr-xml-daily.ru/daily_json.js")
+            RUB_GBP = json.loads(res.text)['Valute']['GBP']['Value']
+            int_RUB_GBP = int(RUB_GBP)
+            summ = rub / int_RUB_GBP
+            bot.send_message(call.message.chat.id, 'Купив фунты на ' + str(rub) + '₽ ты получишь : ' + str(summ) + '£')
+        except Exception as e:
+            bot.send_message(call.message.chat.id, 'Упс, курс сейчас недоступен(((')
+            pass
+
+    elif call.data == "RUB / TRY":
+        try:
+            res = requests.get("https://www.cbr-xml-daily.ru/daily_json.js")
+            RUB_TRY = json.loads(res.text)['Valute']['TRY']['Value']
+            int_RUB_TRY = int(RUB_TRY)
+            summ = rub / int_RUB_TRY
+            bot.send_message(call.message.chat.id, 'Купив Турецкие лиры на ' + str(rub) + '₽ ты получишь : ' + str(summ) + '₺')
+        except Exception as e:
+            bot.send_message(call.message.chat.id, 'Упс, курс сейчас недоступен(((')
+            pass
+
+    elif call.data == "RUB / AED":
+        try:
+            res = requests.get("https://www.cbr-xml-daily.ru/daily_json.js")
+            RUB_AED = json.loads(res.text)['Valute']['AED']['Value']
+            int_RUB_AED = int(RUB_AED)
+            summ = rub / int_RUB_AED
+            bot.send_message(call.message.chat.id, 'Купив дирхамы ОАЭ на ' + str(rub) + '₽ ты получишь : ' + str(summ) + '(DH)')
+        except Exception as e:
+            bot.send_message(call.message.chat.id, 'Упс, курс сейчас недоступен(((')
+            pass
+
+    elif call.data == "RUB / EGP":
+        try:
+            res = requests.get("https://www.cbr-xml-daily.ru/daily_json.js")
+            RUB_EGP = json.loads(res.text)['Valute']['EGP']['Value']
+            int_RUB_EGP = int(RUB_EGP)
+            summ = rub / int_RUB_EGP
+            bot.send_message(call.message.chat.id, 'Купив Египетские фунты на ' + str(rub) + '₽ ты получишь : ' + str(summ) + '(LE)')
+        except Exception as e:
+            bot.send_message(call.message.chat.id, 'Упс, курс сейчас недоступен(((')
+            pass
+
 
 bot.polling(none_stop=True, interval=0)
