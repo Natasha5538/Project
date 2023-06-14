@@ -2,35 +2,64 @@ import telebot
 from telebot import types
 import requests
 import json
-bot = telebot.TeleBot('6058423091:AAEgclpi2zFDIQ2kicv6612KNAYRyWHRTIw') #токен бота, нужен для связи с ним
 
 
+bot = telebot.TeleBot('6058423091:AAEgclpi2zFDIQ2kicv6612KNAYRyWHRTIw')
 name = ''
 rub = ''
 val = ''
+
+
 @bot.message_handler(content_types=['text'])
 def start(message):
-    if message.text == '/start': #если сообщение /start
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True) #выводим приведенные ниже кнопки
+    """
+    Отследить сообщения и дать ответ пользователю
 
-        item1 = types.KeyboardButton('Регистрация') #добавляем кнопку
+    Сообщения, которые может отследить бот:
+
+    /start -- вывести приветствие и кнопки с остальными возможными командами
+
+    Регистрация -- спросить имя пользователя и запомнить его,
+    bot.register_next_step_handler(message, get_name) передаёт имя пользователя в get_name
+
+    Возможности -- вывести сообщение о возможностях бота
+
+    Помощь -- перенаправить на администратора
+
+    Курсы валют -- спросить подтвержедения у пользователя (Да/Назад) и передать значение кнопки в get_valute
+    с помощью bot.register_next_step_handler(message, get_valute) (Да)
+    или вернуться к главному меню (Назад)
+
+    Конвертация рублей в валюту -- спросить у пользователя число рублей и передать в get_conver_rub с помощью
+    bot.register_next_step_handler(message, get_conver_rub)
+
+    Конвертация валюты в рубли -- спросить у пользователя количество единиц валюты и передать в get_conver_val с помощью
+    bot.register_next_step_handler(message, get_conver_val)
+
+    При вводе любого другого текста -- попросить пользователя зарегистрироваться
+    """
+
+    if message.text == '/start':
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+
+        item1 = types.KeyboardButton('Регистрация') 
         item2 = types.KeyboardButton('Возможности')
         item3 = types.KeyboardButton('Помощь')
         item4 = types.KeyboardButton('Конвертация рублей в валюту')
         item5 = types.KeyboardButton('Курсы валют')
         item6 = types.KeyboardButton('Конвертация валюты в рубли')
 
-        markup.add(item1, item2, item3, item4, item5,item6) #добавляем кнопки в область клавиатуры
+        markup.add(item1, item2, item3, item4, item5,item6)
         bot.send_message(message.from_user.id, 'Привет! Я - Check-Bot и я могу быстро предоставить тебе актуальные курсы валют!\n' + 'Для предоставления курса я использую сайт Центрального Банка РФ', reply_markup=markup)
-        #информационное сообщение
 
-    elif message.text == 'Возможности': #если отправляем это сообщение (нажимаем на эту кнопку)
-        bot.send_message(message.from_user.id, 'Я умею :\n• Предоставлять актуальные курсы валют')
-        #бот отправляет ответное сообщение
+    elif message.text == 'Возможности':
+        bot.send_message(message.from_user.id, 'Я умею :\n• Предоставлять актуальные курсы валют\n'
+                                               '• Конвертировать рубли в выбранную валюту\n'
+                                               '• Конвертировать выбранную валюту в рубли'))
 
     elif message.text == 'Помощь':
         markup = types.InlineKeyboardMarkup()
-        switch_button = types.InlineKeyboardButton(text='Помощь', url='https://t.me/NATAASSHHIIK') #при нажатии на кнопку помощь бот перенаправит на чат с администратором бота
+        switch_button = types.InlineKeyboardButton(text='Помощь', url='https://t.me/NATAASSHHIIK')
         markup.add(switch_button)
         bot.send_message(message.from_user.id, 'Если у Вас возникли трудности или появились вопросы, можете обратиться сюда :', reply_markup=markup)
 
@@ -44,7 +73,7 @@ def start(message):
         bot.send_message(message.from_user.id, 'Перейти к курсам?', reply_markup=markup)
         bot.register_next_step_handler(message, get_valute)
 
-    elif message.text == 'Назад': #при нажатии кнопки "назад" бот выведет главное меню в области клавиатуры
+    elif message.text == 'Назад':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
         item1 = types.KeyboardButton('Регистрация')
@@ -58,23 +87,26 @@ def start(message):
         bot.send_message(message.from_user.id, 'Главное меню :', reply_markup=markup)
 
     elif message.text == 'Конвертация рублей в валюту':
-        bot.send_message(message.from_user.id, 'Сколько рублей ты хочешь конвертировать?') #отправляем желаемое число, которое в последствии запоминаем в функции get_conver_rub
+        bot.send_message(message.from_user.id, 'Сколько рублей ты хочешь конвертировать?')
         bot.register_next_step_handler(message, get_conver_rub)
 
     elif message.text == 'Регистрация':
-        bot.send_message(message.from_user.id, 'Как тебя зовут?') #отправляем имя и запоминаем его в функции get_name
+        bot.send_message(message.from_user.id, 'Как тебя зовут?') 
         bot.register_next_step_handler(message, get_name)
 
     elif message.text == 'Конвертация валюты в рубли':
-        bot.send_message(message.from_user.id, 'Сколько единиц валюты ты хочешь конвертировать?') #также отправляем число и запоминаем его в get_conver_val
+        bot.send_message(message.from_user.id, 'Сколько единиц валюты ты хочешь конвертировать?')
         bot.register_next_step_handler(message, get_conver_val)
+
     else:
         bot.send_message(message.from_user.id, 'Напиши "Регистрация"')
+
 
 def get_name(message):
     global name #запоминаем имя пользователя
     name = message.text
     bot.send_message(message.from_user.id, 'Приятно познакомиться, ' + str(name) + '!')
+
 
 def get_valute(message):
     keyboard = types.InlineKeyboardMarkup() #наша
@@ -95,6 +127,7 @@ def get_valute(message):
     keyboard.add(key_egp)
     question = str(name) + ', какая валюта тебя интересует?'
     bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
+
 
 def get_conver_rub(message):
     global rub #запоминаем сумму в рублях
@@ -118,6 +151,7 @@ def get_conver_rub(message):
     question = 'В какую валюту ты хочешь конвертировать рубли?'
     bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
 
+
 def get_conver_val(message):
     global val #запоминаем объем валюты
     val = int(message.text)
@@ -139,6 +173,7 @@ def get_conver_val(message):
     keyboard.add(key_egprub)
     question = 'Какую валюту ты хочешь конвертировать в рубли?'
     bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(call): #прописываем действия, которые будут происходить при нажатии кнопок
@@ -358,5 +393,6 @@ def callback_worker(call): #прописываем действия, котор�
         except Exception as e:
             bot.send_message(call.message.chat.id, 'Упс, курс сейчас недоступен(((')
             pass
+
 
 bot.polling(none_stop=True, interval=0)
