@@ -20,7 +20,7 @@ def start(message):
         item5 = types.KeyboardButton('Курсы валют')
         item6 = types.KeyboardButton('Конвертация валюты в рубли')
 
-        markup.add(item1, item2, item3, item4, item5,item6) #дабавляем кнопки в область клавиатуры
+        markup.add(item1, item2, item3, item4, item5,item6) #добавляем кнопки в область клавиатуры
         bot.send_message(message.from_user.id, 'Привет! Я - Check-Bot и я могу быстро предоставить тебе актуальные курсы валют!\n' + 'Для предоставления курса я использую сайт Центрального Банка РФ', reply_markup=markup)
         #информационное сообщение
 
