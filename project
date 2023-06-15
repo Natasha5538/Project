@@ -103,15 +103,21 @@ def start(message):
 
 
 def get_name(message):
-    global name #запоминаем имя пользователя
+    """
+    Запомнить имя пользователя для регистрации
+    """
+    global name 
     name = message.text
     bot.send_message(message.from_user.id, 'Приятно познакомиться, ' + str(name) + '!')
 
 
 def get_valute(message):
-    keyboard = types.InlineKeyboardMarkup() #наша
+    """
+    Вывести кнопки с названиями валют
+    """
+    keyboard = types.InlineKeyboardMarkup()
 
-    key_usd = types.InlineKeyboardButton(text='USD', callback_data='USD') #кнопка «USD»
+    key_usd = types.InlineKeyboardButton(text='USD', callback_data='USD') 
     keyboard.add(key_usd) #добавляем кнопку в клавиатуру
     key_eur = types.InlineKeyboardButton(text='EUR', callback_data='EUR')
     keyboard.add(key_eur)
@@ -130,12 +136,15 @@ def get_valute(message):
 
 
 def get_conver_rub(message):
-    global rub #запоминаем сумму в рублях
+    """
+    Вывести кнопки с вариантами перевода рублей в разные валюты
+    """
+    global rub 
     rub = int(message.text)
-    keyboard = types.InlineKeyboardMarkup() #наша клавиатура
+    keyboard = types.InlineKeyboardMarkup() 
 
-    key_rubusd = types.InlineKeyboardButton(text='RUB / USD', callback_data='RUB / USD') #кнопка «RUB/USD»
-    keyboard.add(key_rubusd) #добавляем кнопку в клавиатуру
+    key_rubusd = types.InlineKeyboardButton(text='RUB / USD', callback_data='RUB / USD') 
+    keyboard.add(key_rubusd)
     key_rubeur = types.InlineKeyboardButton(text='RUB / EUR', callback_data='RUB / EUR')
     keyboard.add(key_rubeur)
     key_rubcny = types.InlineKeyboardButton(text='RUB / CNY', callback_data='RUB / CNY')
@@ -153,11 +162,14 @@ def get_conver_rub(message):
 
 
 def get_conver_val(message):
-    global val #запоминаем объем валюты
+    """
+    Вывести кнопки с вариантами перевода разных валют в рубли
+    """
+    global val
     val = int(message.text)
-    keyboard = types.InlineKeyboardMarkup()  # наша клавиатура
+    keyboard = types.InlineKeyboardMarkup() 
 
-    key_usdrub = types.InlineKeyboardButton(text='USD / RUB', callback_data='USD / RUB')  # кнопка «USD/RUB»
+    key_usdrub = types.InlineKeyboardButton(text='USD / RUB', callback_data='USD / RUB')  
     keyboard.add(key_usdrub)  # добавляем кнопку в клавиатуру
     key_eurrub = types.InlineKeyboardButton(text='EUR / RUB', callback_data='EUR / RUB')
     keyboard.add(key_eurrub)
