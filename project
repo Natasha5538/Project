@@ -49,21 +49,21 @@ def start(message):
         item6 = types.KeyboardButton('Конвертация валюты в рубли')
 
         markup.add(item1, item2, item3, item4, item5,item6)
-        bot.send_message(message.from_user.id, 'Привет! Я - Check-Bot и я могу быстро предоставить \
-                                                тебе актуальные курсы валют!\n' + 'Для предоставления курса \
-                                                я использую сайт Центрального Банка РФ', reply_markup=markup)
+        bot.send_message(message.from_user.id, 'Привет! Я - Check-Bot и я могу быстро предоставить'
+                                                'тебе актуальные курсы валют!\n' + 'Для предоставления курса'
+                                                'я использую сайт Центрального Банка РФ', reply_markup=markup)
 
     elif message.text == 'Возможности':
-        bot.send_message(message.from_user.id, 'Я умею :\n• Предоставлять актуальные курсы валют\n \
-                                                •Конвертировать рубли в выбранную валюту\n \
-                                                •Конвертировать выбранную валюту в рубли')
+        bot.send_message(message.from_user.id, 'Я умею :\n• Предоставлять актуальные курсы валют\n'
+                                                '•Конвертировать рубли в выбранную валюту\n'
+                                                '•Конвертировать выбранную валюту в рубли')
 
     elif message.text == 'Помощь':
         markup = types.InlineKeyboardMarkup()
         switch_button = types.InlineKeyboardButton(text='Помощь', url='https://t.me/NATAASSHHIIK')
         markup.add(switch_button)
-        bot.send_message(message.from_user.id, 'Если у Вас возникли трудности или появились вопросы, \
-                                                можете обратиться сюда :', reply_markup=markup)
+        bot.send_message(message.from_user.id, 'Если у Вас возникли трудности или появились вопросы,' 
+                                                'можете обратиться сюда :', reply_markup=markup)
 
     elif message.text == 'Курсы валют':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
